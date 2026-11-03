@@ -10,6 +10,18 @@ from flask import Flask, jsonify, request
 from werkzeug.exceptions import HTTPException
 
 
+def validar_indicadores(indicadores, artefato):
+    if not isinstance(indicadores, dict) or set(indicadores) != set(artefato['features']):
+        raise ValueError('indicadores deve conter exatamente as oito features informadas em /modelo.')
+    for nome, valor in indicadores.items():
+        if isinstance(valor, bool) or not isinstance(valor, (int, float)) or not math.isfinite(valor) or valor < 0:
+            raise ValueError(f'{nome} deve ser um número finito não negativo.')
+        if nome in artefato['percentuais'] and valor > 100:
+            raise ValueError(f'{nome} deve estar entre zero e cem.')
+    if indicadores['cobertura_coleta_seletiva_pct'] > indicadores['cobertura_coleta_residuos_pct']:
+        raise ValueError('A cobertura seletiva não pode superar a cobertura total.')
+
+
 def criar_app(caminho_modelo=None):
     app = Flask(__name__)
     app.json.ensure_ascii = False
@@ -76,6 +88,10 @@ def criar_app(caminho_modelo=None):
             return consultar_municipio(codigo)
         if not isinstance(corpo, dict) or set(corpo) != {'indicadores'}:
             return jsonify({'erro': 'Envie apenas codigo_ibge ou indicadores.'}), 422
+        try:
+            validar_indicadores(corpo['indicadores'], artefato)
+        except ValueError as erro:
+            return jsonify({'erro': str(erro)}), 422
         return prever(corpo['indicadores'])
 
     return app
