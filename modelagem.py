@@ -84,3 +84,16 @@ def comparar_modelos(treino, validacao):
     if not tabela.elegivel.any():
         raise ValueError('Nenhum candidato convergiu com ao menos 2% em cada grupo de validação.')
     return tabela, candidatos
+
+
+def avaliar_finalistas(tabela, candidatos, teste):
+    # A seleção usa somente validação; teste é observado após fixar os finalistas.
+    finalistas = tabela[tabela.elegivel].groupby('modelo', sort=False).head(1)
+    resultados = {}
+    for linha in finalistas.itertuples():
+        resultados[linha.modelo] = {
+            'k': int(linha.k),
+            **medir_grupos(candidatos[(linha.modelo, linha.k)], teste, linha.k),
+        }
+    vencedor = tabela[tabela.elegivel].iloc[0]
+    return str(vencedor.modelo), int(vencedor.k), resultados
