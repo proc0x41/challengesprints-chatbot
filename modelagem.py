@@ -36,3 +36,13 @@ def criar_kmeans(k):
         ('preparo', criar_preparo()),
         ('modelo', KMeans(n_clusters=k, n_init=20, random_state=SEMENTE)),
     ])
+
+
+def criar_mistura(k):
+    return Pipeline([
+        ('preparo', criar_preparo()),
+        ('modelo', GaussianMixture(
+            n_components=k, covariance_type='full', n_init=5,
+            max_iter=500, reg_covar=1e-5, random_state=SEMENTE,
+        )),
+    ])
