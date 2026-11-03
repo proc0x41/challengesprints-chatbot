@@ -35,6 +35,7 @@ class TestAPI(unittest.TestCase):
         indicadores = {**self.indicadores, 'pontos_entrega_voluntaria_por_mil_hab': 0}
         resposta = self.cliente.post('/prever', json={'indicadores': indicadores})
         self.assertEqual(resposta.status_code, 200)
+        self.assertTrue(resposta.json['recomendacoes'])
         self.assertNotIn('entrega_voluntaria', [r['categoria'] for r in resposta.json['recomendacoes']])
 
     def test_entradas_invalidas(self):

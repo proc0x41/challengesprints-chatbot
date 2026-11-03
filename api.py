@@ -31,9 +31,8 @@ def criar_app(caminho_modelo=None):
     def tratar_http(erro):
         return jsonify({'erro': erro.description}), erro.code
 
-    caminho = Path(caminho_modelo or os.getenv(
-        'ALPHA4_MODELO', Path(__file__).resolve().with_name('modelo_alpha4.joblib'),
-    ))
+    pasta = Path(__file__).resolve().parent if '__file__' in globals() else Path.cwd()
+    caminho = Path(caminho_modelo or os.getenv('ALPHA4_MODELO', pasta / 'modelo_alpha4.joblib'))
     # Carrega uma única vez na inicialização. Nunca há fit dentro das rotas.
     try:
         artefato = joblib.load(caminho)
@@ -62,6 +61,12 @@ def criar_app(caminho_modelo=None):
         recomendacoes = [item for item in perfil['recomendacoes'] if
             item['categoria'] != 'entrega_voluntaria'
             or indicadores['pontos_entrega_voluntaria_por_mil_hab'] > 0]
+        if not recomendacoes:
+            recomendacoes = [{
+                'categoria': 'consumo_consciente',
+                'orientacao': 'Planeje compras e evite descartáveis desnecessários.',
+                'motivo_grupo': 'Sugestão geral após excluir entrega voluntária sem indicador local positivo.',
+            }]
         return jsonify({
             'modelo': artefato['modelo'], 'grupo': grupo, 'perfil': perfil['nome'],
             'municipio': municipio, 'ano_referencia': artefato['ano_referencia'],

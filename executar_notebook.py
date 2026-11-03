@@ -18,7 +18,11 @@ def executar(caminho=PASTA / 'Alpha4_Modelos.ipynb'):
         notebook, km=gerenciador, timeout=600,
         resources={'metadata': {'path': str(Path(caminho).parent)}},
     )
-    cliente.execute()
+    try:
+        cliente.execute()
+    finally:
+        if gerenciador.has_kernel:
+            gerenciador.shutdown_kernel(now=True)
     nbformat.validate(notebook)
     for celula in notebook.cells:
         if celula.cell_type == 'code':
