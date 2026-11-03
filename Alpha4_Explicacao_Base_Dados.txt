@@ -1,0 +1,262 @@
+ARTIFICIAL INTELLIGENCE & CHATBOT
+ENTREGA – 3ª SPRINT: CONSTRUÇÃO DA BASE DE DADOS
+PROJETO ALPHA4 – RECOMENDAÇÃO DE MISSÕES SUSTENTÁVEIS PARA A SOUL UP
+
+ARQUIVOS DA ENTREGA
+- Alpha4_Base_Dados.zip: contém alpha4_sinisa_ibge_municipios.csv.
+- Alpha4_Explicacao_Base_Dados.txt: este documento.
+
+INTEGRANTES DO GRUPO
+- Vinicius de Oliveira – RM 561862
+- Robison Custodio Junior – RM 572866
+- Lucas Fernando Silva – RM 564848
+- Thiago Shimizu Sodré dos Santos – RM 572867
+- Arthur Mendes Garcia – RM 571703
+
+1. TEMA E ADERÊNCIA AO DESAFIO
+
+O Alpha4 é um sistema de gamificação para a rede social sustentável Soul UP. A base apoia um sistema de recomendação contextual de missões ambientais. Cada linha representa um município brasileiro e reúne sua localização, população e indicadores reais de manejo de resíduos.
+
+A IA poderá agrupar municípios com condições semelhantes e associar cada grupo a missões adequadas. Municípios com baixa cobertura seletiva podem receber campanhas de redução, reutilização e separação correta. Municípios com pontos de entrega podem receber missões de descarte nesses locais. Locais com baixa recuperação de recicláveis podem receber ações educativas e comunitárias.
+
+Esta base não mede cliques, sessões ou retenção dos usuários da Soul UP. Portanto, ela não deve ser apresentada como uma base para prever engajamento individual. Seu escopo é recomendar o conteúdo das missões conforme o contexto municipal.
+
+2. ORIGEM DOS DADOS
+
+SINISA – Sistema Nacional de Informações em Saneamento Básico
+- Produto: Diagnóstico do Manejo de Resíduos Sólidos Urbanos – Planilha de Indicadores.
+- Ano de referência: 2023.
+- Arquivo original: SINISA_RESIDUOS_Indicadores_2023.xlsx.
+- Órgão: Ministério das Cidades / Secretaria Nacional de Saneamento Ambiental.
+- Endereço: https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa
+
+IBGE – Instituto Brasileiro de Geografia e Estatística
+- Produto: API de Localidades – Municípios.
+- Uso: código e nome do município, UF, região, regiões geográficas imediata/intermediária e micro/mesorregião.
+- Endpoint utilizado: https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome
+- Documentação: https://servicodados.ibge.gov.br/api/docs/localidades
+
+Os valores ambientais e territoriais são provenientes dessas fontes públicas. Somente cinco features foram calculadas a partir dos valores originais: taxa_urbanizacao_pct, densidade_populacional_hab_km2, gap_coleta_seletiva_pct, possui_coleta_seletiva e possui_ponto_entrega_voluntaria.
+
+3. PROCESSO DE CONSTRUÇÃO E LIMPEZA
+
+O processamento foi realizado com Python, pandas e numpy, seguindo a stack utilizada nas aulas.
+
+Etapas executadas:
+1. Leitura da planilha de indicadores do SINISA e do JSON oficial do IBGE.
+2. Padronização de codigo_ibge como chave textual de sete dígitos.
+3. Conversão explícita dos indicadores para tipos numéricos.
+4. Seleção somente de atributos aderentes à recomendação de missões sustentáveis.
+5. Remoção dos municípios que não responderam ao módulo do SINISA.
+6. Junção interna pelo codigo_ibge com validação de cardinalidade um-para-um.
+7. Verificação de compatibilidade da UF entre as fontes.
+8. Remoção de registros com campos essenciais ausentes ou percentuais fora de 0 a 100.
+9. Remoção de casos em que a cobertura seletiva excedia a cobertura total de coleta.
+10. Criação das cinco features derivadas descritas acima.
+11. Ordenação pelo código IBGE e exportação em CSV UTF-8 com cabeçalho.
+
+Não foi aplicada normalização nem One-Hot Encoding na base entregue. Essas transformações devem ser ajustadas durante a modelagem, preservando os valores reais e evitando aplicar uma transformação irreversível antes da definição do algoritmo.
+
+4. QUANTIDADE E QUALIDADE
+
+- Municípios disponíveis no IBGE: 5571.
+- Municípios disponíveis no SINISA 2023: 5570.
+- Municípios que responderam ao módulo do SINISA: 4778.
+- Municípios não respondentes removidos: 792.
+- Registros encontrados na junção IBGE + SINISA respondente: 4778.
+- Registros removidos por campos essenciais ausentes: 0.
+- Registros removidos por faixas ou relações lógicas inválidas: 3.
+- Registros finais: 4775.
+- Colunas finais: 31.
+- Códigos IBGE duplicados na base final: 0.
+- Células vazias na base final: 0.
+- Divergências de UF entre as fontes: 0.
+- Diferenças apenas de grafia do município entre as fontes: 13. A chave utilizada foi o código IBGE, não o nome.
+- Municípios com alguma cobertura seletiva: 1295.
+- Municípios com indicador positivo de ponto de entrega voluntária: 1177.
+
+O cadastro atual do IBGE possui um município que não aparece no SINISA 2023: Boa Esperança do Norte/MT, criado posteriormente ao ano de referência. Esse município não foi inventado nem preenchido artificialmente; ele ficou fora da base final por não possuir observação correspondente no SINISA 2023.
+
+Os indicadores do SINISA são declarados pelos responsáveis municipais. A base é real e oficial, mas isso não elimina possíveis erros de preenchimento e valores extremos. Por esse motivo, percentuais fora do domínio válido e relações impossíveis foram excluídos. Indicadores avançados com baixa cobertura, como composição detalhada por material, não foram selecionados.
+
+5. SIGNIFICADO DAS COLUNAS
+
+01. codigo_ibge
+    Tipo: texto
+    Significado: Código oficial de sete dígitos usado na junção das duas fontes.
+
+02. municipio
+    Tipo: categoria
+    Significado: Nome oficial atual do município segundo o IBGE.
+
+03. uf
+    Tipo: categoria
+    Significado: Sigla da Unidade da Federação.
+
+04. nome_uf
+    Tipo: categoria
+    Significado: Nome da Unidade da Federação.
+
+05. sigla_regiao
+    Tipo: categoria
+    Significado: Sigla da grande região brasileira.
+
+06. regiao
+    Tipo: categoria
+    Significado: Nome da grande região brasileira.
+
+07. regiao_intermediaria
+    Tipo: categoria
+    Significado: Região geográfica intermediária do IBGE.
+
+08. regiao_imediata
+    Tipo: categoria
+    Significado: Região geográfica imediata do IBGE.
+
+09. mesorregiao
+    Tipo: categoria
+    Significado: Mesorregião geográfica do cadastro do IBGE.
+
+10. microrregiao
+    Tipo: categoria
+    Significado: Microrregião geográfica do cadastro do IBGE.
+
+11. ano_referencia_sinisa
+    Tipo: inteiro
+    Significado: Ano ao qual os indicadores do SINISA se referem: 2023.
+
+12. populacao_total
+    Tipo: inteiro
+    Significado: População total utilizada pelo SINISA.
+
+13. populacao_urbana
+    Tipo: inteiro
+    Significado: População urbana utilizada pelo SINISA.
+
+14. populacao_rural
+    Tipo: inteiro
+    Significado: População rural utilizada pelo SINISA.
+
+15. area_km2
+    Tipo: decimal
+    Significado: Área municipal em quilômetros quadrados.
+
+16. taxa_urbanizacao_pct
+    Tipo: decimal 0–100
+    Significado: Feature calculada: população urbana dividida pela população total.
+
+17. densidade_populacional_hab_km2
+    Tipo: decimal
+    Significado: Feature calculada: população total dividida pela área.
+
+18. cobertura_coleta_residuos_pct
+    Tipo: decimal 0–100
+    Significado: Percentual da população total coberta por coleta domiciliar.
+
+19. cobertura_coleta_residuos_urbana_pct
+    Tipo: decimal 0–100
+    Significado: Percentual da população urbana coberta por coleta domiciliar.
+
+20. cobertura_coleta_direta_urbana_pct
+    Tipo: decimal 0–100
+    Significado: Percentual urbano coberto por coleta domiciliar direta.
+
+21. cobertura_coleta_seletiva_pct
+    Tipo: decimal 0–100
+    Significado: Percentual da população total coberta por coleta seletiva.
+
+22. cobertura_coleta_seletiva_urbana_pct
+    Tipo: decimal 0–100
+    Significado: Percentual urbano coberto por coleta seletiva direta.
+
+23. gap_coleta_seletiva_pct
+    Tipo: decimal 0–100
+    Significado: Feature calculada: cobertura da coleta comum menos a seletiva.
+
+24. pontos_entrega_voluntaria_por_mil_hab
+    Tipo: decimal
+    Significado: Pontos/locais de entrega voluntária de recicláveis por mil habitantes.
+
+25. possui_coleta_seletiva
+    Tipo: binário 0/1
+    Significado: Feature calculada: 1 quando a cobertura seletiva é maior que zero.
+
+26. possui_ponto_entrega_voluntaria
+    Tipo: binário 0/1
+    Significado: Feature calculada: 1 quando há indicador positivo de ponto de entrega.
+
+27. massa_residuos_urbanos_kg_hab_dia
+    Tipo: decimal
+    Significado: Massa média de resíduos urbanos coletados por habitante/dia.
+
+28. massa_residuos_domiciliares_kg_hab_dia
+    Tipo: decimal
+    Significado: Massa média de resíduos domiciliares coletados por habitante/dia.
+
+29. massa_limpeza_urbana_kg_hab_dia
+    Tipo: decimal
+    Significado: Massa média da limpeza urbana coletada por habitante/dia.
+
+30. disposicao_final_inadequada_pct
+    Tipo: decimal 0–100
+    Significado: Percentual de resíduos urbanos com disposição final inadequada.
+
+31. recuperacao_reciclaveis_pct
+    Tipo: decimal 0–100
+    Significado: Percentual de recicláveis secos e orgânicos recuperados sobre o total coletado.
+
+6. CARACTERÍSTICAS IMPORTANTES (FEATURES)
+
+As features principais para a recomendação são:
+
+- cobertura_coleta_seletiva_pct e gap_coleta_seletiva_pct: indicam a disponibilidade e a carência da coleta seletiva.
+- pontos_entrega_voluntaria_por_mil_hab: indica se missões de descarte em pontos de entrega são viáveis.
+- recuperacao_reciclaveis_pct: ajuda a identificar municípios que precisam reforçar separação e recuperação de materiais.
+- disposicao_final_inadequada_pct: identifica contextos que exigem educação sobre descarte responsável.
+- massa_residuos_urbanos_kg_hab_dia: representa a intensidade da geração/coleta de resíduos.
+- taxa_urbanizacao_pct e densidade_populacional_hab_km2: ajudam a diferenciar contextos urbanos, rurais e de diferentes escalas.
+- regiao, UF e regiões imediata/intermediária: permitem recomendações e análises geográficas.
+
+codigo_ibge, municipio e nomes geográficos são identificadores/contexto. Eles não devem ser normalizados como números nem utilizados como medidas de distância sem codificação adequada.
+
+7. RÓTULOS (LABELS)
+
+Não existe variável-alvo nesta sprint. A proposta é inicialmente NÃO SUPERVISIONADA: agrupar municípios por semelhança e associar cada grupo a um conjunto de missões sustentáveis.
+
+Não foi criado um label artificial. Uma futura variável como “missão aceita pelo usuário” só poderá ser usada quando a Soul UP coletar interações reais dos usuários.
+
+8. OBJETIVO DA INTELIGÊNCIA ARTIFICIAL
+
+A IA deverá recomendar categorias de missões sustentáveis adequadas ao contexto do município do usuário. Exemplos:
+
+- pouca coleta seletiva: redução, reutilização, separação correta e educação ambiental;
+- existência de pontos de entrega: descarte de recicláveis em local adequado;
+- baixa recuperação de recicláveis: desafios de separação e mobilização comunitária;
+- alta geração de resíduos: missões de consumo consciente e redução de descartáveis;
+- disposição final inadequada elevada: conscientização e participação em ações locais seguras.
+
+O sistema não deve recomendar manipulação direta de resíduos perigosos, entrada em áreas de descarte ou qualquer atividade sem segurança e autorização.
+
+9. PREPARAÇÃO RECOMENDADA PARA A PRÓXIMA SPRINT
+
+- Retirar codigo_ibge e municipio do conjunto usado para calcular distâncias.
+- Aplicar One-Hot Encoding somente às categorias geográficas escolhidas.
+- Aplicar RobustScaler ou StandardScaler às features numéricas dentro do pipeline de modelagem.
+- Avaliar K-Means com diferentes valores de k e comparar silhouette score.
+- Usar PCA apenas para visualização dos grupos, não como prova de qualidade isolada.
+- Examinar os centroides e nomear os grupos com base nos indicadores reais.
+- Criar as regras que ligam cada grupo a categorias de missão em uma tabela separada e auditável.
+- Validar as recomendações com pessoas e, quando disponível, com dados reais de aceitação das missões.
+
+10. LIMITAÇÕES
+
+- Ano ambiental de referência: 2023.
+- A unidade de análise é o município, não a pessoa.
+- Municípios não respondentes não fazem parte da base modelável.
+- Valores extremos podem existir mesmo após as verificações de domínio, pois são dados declarados.
+- A base orienta o tipo de missão, mas não prevê engajamento individual.
+- As condições municipais podem mudar; a base deve ser atualizada quando o SINISA publicar nova edição.
+
+RESUMO
+
+A base combina duas fontes públicas reais por uma chave oficial, preserva a rastreabilidade, possui dicionário de dados, registra as exclusões realizadas e está pronta para exploração e agrupamento não supervisionado com a stack trabalhada nas aulas.
