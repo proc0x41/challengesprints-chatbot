@@ -26,6 +26,11 @@ def criar_app(caminho_modelo=None):
     app = Flask(__name__)
     app.json.ensure_ascii = False
     app.config['MAX_CONTENT_LENGTH'] = 32 * 1024
+
+    @app.errorhandler(HTTPException)
+    def tratar_http(erro):
+        return jsonify({'erro': erro.description}), erro.code
+
     caminho = Path(caminho_modelo or os.getenv(
         'ALPHA4_MODELO', Path(__file__).resolve().with_name('modelo_alpha4.joblib'),
     ))
