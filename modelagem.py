@@ -29,3 +29,10 @@ def criar_preparo():
         ('percentuais', 'passthrough', PERCENTUAIS),
     ], remainder='drop')
     return Pipeline([('transformar', transformar), ('escalonar', StandardScaler())])
+
+
+def criar_kmeans(k):
+    return Pipeline([
+        ('preparo', criar_preparo()),
+        ('modelo', KMeans(n_clusters=k, n_init=20, random_state=SEMENTE)),
+    ])
