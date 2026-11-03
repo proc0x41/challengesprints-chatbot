@@ -3,6 +3,7 @@
 import base64
 import gzip
 import hashlib
+import json
 from pathlib import Path
 
 import nbformat as nbf
@@ -22,6 +23,9 @@ def montar_notebook():
     base = (PASTA / 'alpha4_sinisa_ibge_municipios.csv').read_bytes()
     compactada = base64.b64encode(gzip.compress(base, mtime=0)).decode('ascii')
     sha256 = hashlib.sha256(base).hexdigest()
+    metricas = json.loads((PASTA / 'metricas.json').read_text(encoding='utf-8'))
+    teste_kmeans = metricas['finalistas_teste']['kmeans']
+    teste_mistura = metricas['finalistas_teste']['mistura_gaussiana']
     celulas = [
         markdown('''# Alpha4: missões sustentáveis por contexto municipal
 
@@ -100,11 +104,25 @@ display(tabela.round(5))
 display(pd.DataFrame(artefato['metricas']['finalistas_teste']).T)
 print('Partições:', artefato['metricas']['particao'])
 print('Selecionado pela validação:', artefato['modelo'], '| k =', artefato['k'])'''),
+        markdown(f'''### Interpretação da comparação executada
+
+O K-Means com **k={teste_kmeans['k']}** apresentou a maior silhouette de validação entre os dez candidatos. Esse k está no limite superior da faixa 2–6 pesquisada: o resultado justifica a escolha dentro desta comparação, mas não demonstra que seis é o número ideal em qualquer cenário.
+
+No teste reservado, a silhouette do K-Means foi **{teste_kmeans['silhouette']:.5f}**, contra **{teste_mistura['silhouette']:.5f}** da mistura gaussiana com **k={teste_mistura['k']}**. As duas medidas são positivas, mas modestas; há sobreposição importante dos contextos, e não uma separação perfeita. Davies-Bouldin foi **{teste_kmeans['davies_bouldin']:.5f}** para K-Means e **{teste_mistura['davies_bouldin']:.5f}** para GMM, também favorecendo o primeiro nesta avaliação geométrica.
+
+A flexibilidade de covariâncias do GMM não gerou maior separação por silhouette nesta base. A presença de muitos zeros e indicadores assimétricos pode dificultar a hipótese gaussiana; isso é uma hipótese explicativa, não uma causa demonstrada pelos experimentos. Não relatamos “acertos” de missões, pois não existem rótulos verdadeiros de aceitação para verificá-los.'''),
         codigo('''perfis = pd.DataFrame({grupo: {
     'municipios': perfil['municipios'], **perfil['medias']
 } for grupo, perfil in artefato['perfis'].items()}).T
 display(perfis.round(3))
 display(pd.DataFrame(artefato['regras']))'''),
+        markdown('''### Leitura dos perfis observados no reajuste final
+
+Os grupos 0 e 1 têm cobertura seletiva média próxima de 2%, mas diferem fortemente na disposição inadequada (aproximadamente 98,8% e 2,9%). Assim, educação e redução fazem sentido nos dois perfis, enquanto informação sobre descarte responsável é especialmente destacada no primeiro.
+
+O grupo 4 reúne 1.208 municípios com urbanização média de 42,7% e coleta comum de 53,7%, um contexto com menor cobertura do serviço. O grupo 5 reúne 728 municípios com coleta seletiva média de 85,0%. Os grupos 2 e 3 têm somente 225 e 179 municípios: médias de recuperação ou pontos de entrega os distinguem, mas seus tamanhos menores e valores extremos recomendam cautela.
+
+As regras não tornam todos os integrantes de um grupo iguais. O filtro municipal de pontos de entrega impede recomendar esse tipo de ação com indicador local zero; quando nenhuma categoria específica permanece, a API usa uma sugestão geral de consumo consciente. As médias descrevem este reajuste e não devem ser confundidas com os IDs dos pipelines de teste, cujos rótulos podem permutar.'''),
         markdown('''## 5. Visualização exploratória
 
 PCA em duas dimensões é usado apenas para visualizar o reajuste na base completa. Sobreposição ou separação no gráfico não substitui as métricas do teste, nem comprova relevância das missões. Os números de grupo são identificadores arbitrários e podem mudar em um novo treinamento.'''),

@@ -1,0 +1,173 @@
+{
+  "0": {
+    "nome": "Grupo 0: coleta seletiva média 1.9%",
+    "municipios": 1162,
+    "medias": {
+      "taxa_urbanizacao_pct": 64.26944061962134,
+      "densidade_populacional_hab_km2": 25.776480206540448,
+      "cobertura_coleta_residuos_pct": 81.8334595524957,
+      "cobertura_coleta_seletiva_pct": 1.9091394148020655,
+      "pontos_entrega_voluntaria_por_mil_hab": 0.02822719449225473,
+      "massa_residuos_urbanos_kg_hab_dia": 1.0223063683304647,
+      "disposicao_final_inadequada_pct": 98.76246987951808,
+      "recuperacao_reciclaveis_pct": 0.32571428571428573
+    },
+    "recomendacoes": [
+      {
+        "categoria": "reducao_e_reutilizacao",
+        "orientacao": "Reduza descartáveis e reutilize materiais limpos e seguros.",
+        "motivo_grupo": "Média de cobertura_coleta_seletiva_pct: 1.91; regra < 30."
+      },
+      {
+        "categoria": "separacao_e_educacao",
+        "orientacao": "Aprenda a separar recicláveis e compartilhe orientações locais verificadas.",
+        "motivo_grupo": "Média de recuperacao_reciclaveis_pct: 0.33; regra < 5."
+      },
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 0.03; regra > 0."
+      },
+      {
+        "categoria": "consumo_consciente",
+        "orientacao": "Planeje compras e evite descartáveis desnecessários.",
+        "motivo_grupo": "Média de massa_residuos_urbanos_kg_hab_dia: 1.02; regra > 1."
+      },
+      {
+        "categoria": "descarte_responsavel",
+        "orientacao": "Busque informações oficiais de coleta e descarte; não entre em áreas de disposição.",
+        "motivo_grupo": "Média de disposicao_final_inadequada_pct: 98.76; regra > 50."
+      }
+    ]
+  },
+  "1": {
+    "nome": "Grupo 1: coleta seletiva média 2.1%",
+    "municipios": 1273,
+    "medias": {
+      "taxa_urbanizacao_pct": 77.70354281225451,
+      "densidade_populacional_hab_km2": 289.8203927729772,
+      "cobertura_coleta_residuos_pct": 92.03301649646504,
+      "cobertura_coleta_seletiva_pct": 2.1078004713275726,
+      "pontos_entrega_voluntaria_por_mil_hab": 0.03591516103692066,
+      "massa_residuos_urbanos_kg_hab_dia": 1.002215239591516,
+      "disposicao_final_inadequada_pct": 2.9063236449332286,
+      "recuperacao_reciclaveis_pct": 0.5624351924587588
+    },
+    "recomendacoes": [
+      {
+        "categoria": "reducao_e_reutilizacao",
+        "orientacao": "Reduza descartáveis e reutilize materiais limpos e seguros.",
+        "motivo_grupo": "Média de cobertura_coleta_seletiva_pct: 2.11; regra < 30."
+      },
+      {
+        "categoria": "separacao_e_educacao",
+        "orientacao": "Aprenda a separar recicláveis e compartilhe orientações locais verificadas.",
+        "motivo_grupo": "Média de recuperacao_reciclaveis_pct: 0.56; regra < 5."
+      },
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 0.04; regra > 0."
+      },
+      {
+        "categoria": "consumo_consciente",
+        "orientacao": "Planeje compras e evite descartáveis desnecessários.",
+        "motivo_grupo": "Média de massa_residuos_urbanos_kg_hab_dia: 1.00; regra > 1."
+      }
+    ]
+  },
+  "2": {
+    "nome": "Grupo 2: coleta seletiva média 40.3%",
+    "municipios": 225,
+    "medias": {
+      "taxa_urbanizacao_pct": 57.827200000000005,
+      "densidade_populacional_hab_km2": 29.672977777777778,
+      "cobertura_coleta_residuos_pct": 76.78315555555555,
+      "cobertura_coleta_seletiva_pct": 40.34968888888889,
+      "pontos_entrega_voluntaria_por_mil_hab": 0.09782222222222223,
+      "massa_residuos_urbanos_kg_hab_dia": 0.5723555555555555,
+      "disposicao_final_inadequada_pct": 18.5484,
+      "recuperacao_reciclaveis_pct": 29.5852
+    },
+    "recomendacoes": [
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 0.10; regra > 0."
+      }
+    ]
+  },
+  "3": {
+    "nome": "Grupo 3: coleta seletiva média 35.7%",
+    "municipios": 179,
+    "medias": {
+      "taxa_urbanizacao_pct": 66.22050279329609,
+      "densidade_populacional_hab_km2": 49.13826815642458,
+      "cobertura_coleta_residuos_pct": 82.06698324022346,
+      "cobertura_coleta_seletiva_pct": 35.71117318435754,
+      "pontos_entrega_voluntaria_por_mil_hab": 1.5692737430167596,
+      "massa_residuos_urbanos_kg_hab_dia": 0.7891620111731843,
+      "disposicao_final_inadequada_pct": 28.11117318435754,
+      "recuperacao_reciclaveis_pct": 5.615586592178771
+    },
+    "recomendacoes": [
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 1.57; regra > 0."
+      }
+    ]
+  },
+  "4": {
+    "nome": "Grupo 4: coleta seletiva média 3.4%",
+    "municipios": 1208,
+    "medias": {
+      "taxa_urbanizacao_pct": 42.723518211920535,
+      "densidade_populacional_hab_km2": 21.961067880794705,
+      "cobertura_coleta_residuos_pct": 53.6726738410596,
+      "cobertura_coleta_seletiva_pct": 3.4163162251655628,
+      "pontos_entrega_voluntaria_por_mil_hab": 0.03401490066225166,
+      "massa_residuos_urbanos_kg_hab_dia": 0.41086092715231787,
+      "disposicao_final_inadequada_pct": 34.66239238410596,
+      "recuperacao_reciclaveis_pct": 0.8927400662251657
+    },
+    "recomendacoes": [
+      {
+        "categoria": "reducao_e_reutilizacao",
+        "orientacao": "Reduza descartáveis e reutilize materiais limpos e seguros.",
+        "motivo_grupo": "Média de cobertura_coleta_seletiva_pct: 3.42; regra < 30."
+      },
+      {
+        "categoria": "separacao_e_educacao",
+        "orientacao": "Aprenda a separar recicláveis e compartilhe orientações locais verificadas.",
+        "motivo_grupo": "Média de recuperacao_reciclaveis_pct: 0.89; regra < 5."
+      },
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 0.03; regra > 0."
+      }
+    ]
+  },
+  "5": {
+    "nome": "Grupo 5: coleta seletiva média 85.0%",
+    "municipios": 728,
+    "medias": {
+      "taxa_urbanizacao_pct": 82.99347527472527,
+      "densidade_populacional_hab_km2": 244.0971153846154,
+      "cobertura_coleta_residuos_pct": 94.0626510989011,
+      "cobertura_coleta_seletiva_pct": 84.97101648351648,
+      "pontos_entrega_voluntaria_por_mil_hab": 0.06151098901098901,
+      "massa_residuos_urbanos_kg_hab_dia": 0.8904807692307692,
+      "disposicao_final_inadequada_pct": 10.747019230769231,
+      "recuperacao_reciclaveis_pct": 5.94070054945055
+    },
+    "recomendacoes": [
+      {
+        "categoria": "entrega_voluntaria",
+        "orientacao": "Consulte endereço, materiais aceitos e funcionamento de ponto de entrega oficial.",
+        "motivo_grupo": "Média de pontos_entrega_voluntaria_por_mil_hab: 0.06; regra > 0."
+      }
+    ]
+  }
+}

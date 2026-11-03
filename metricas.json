@@ -1,0 +1,144 @@
+{
+  "semente": 42,
+  "particao": {
+    "treino": 2865,
+    "validacao": 955,
+    "teste": 955
+  },
+  "vencedor": {
+    "modelo": "kmeans",
+    "k": 6
+  },
+  "candidatos_validacao": [
+    {
+      "modelo": "kmeans",
+      "k": 6,
+      "convergiu": true,
+      "menor_proporcao": 0.03769633507853403,
+      "silhouette": 0.22724793986557562,
+      "davies_bouldin": 1.3331863297208766,
+      "calinski_harabasz": 205.00676459741905,
+      "elegivel": true
+    },
+    {
+      "modelo": "kmeans",
+      "k": 5,
+      "convergiu": true,
+      "menor_proporcao": 0.039790575916230364,
+      "silhouette": 0.2161725290130616,
+      "davies_bouldin": 1.411941437156017,
+      "calinski_harabasz": 203.18554923078182,
+      "elegivel": true
+    },
+    {
+      "modelo": "kmeans",
+      "k": 2,
+      "convergiu": true,
+      "menor_proporcao": 0.45340314136125653,
+      "silhouette": 0.20403873397546607,
+      "davies_bouldin": 1.8512009651337367,
+      "calinski_harabasz": 238.18180144754214,
+      "elegivel": true
+    },
+    {
+      "modelo": "kmeans",
+      "k": 3,
+      "convergiu": true,
+      "menor_proporcao": 0.22094240837696336,
+      "silhouette": 0.20023167212703527,
+      "davies_bouldin": 1.6597263443561925,
+      "calinski_harabasz": 224.5590251573011,
+      "elegivel": true
+    },
+    {
+      "modelo": "kmeans",
+      "k": 4,
+      "convergiu": true,
+      "menor_proporcao": 0.21256544502617802,
+      "silhouette": 0.19852634987362724,
+      "davies_bouldin": 1.575735117709951,
+      "calinski_harabasz": 202.70837749812907,
+      "elegivel": true
+    },
+    {
+      "modelo": "mistura_gaussiana",
+      "k": 3,
+      "convergiu": true,
+      "menor_proporcao": 0.2712041884816754,
+      "silhouette": 0.13739480861549247,
+      "davies_bouldin": 2.115620488418653,
+      "calinski_harabasz": 141.44022242443162,
+      "elegivel": true
+    },
+    {
+      "modelo": "mistura_gaussiana",
+      "k": 2,
+      "convergiu": true,
+      "menor_proporcao": 0.450261780104712,
+      "silhouette": 0.13284853459377227,
+      "davies_bouldin": 2.656559621389214,
+      "calinski_harabasz": 119.73080556715402,
+      "elegivel": true
+    },
+    {
+      "modelo": "mistura_gaussiana",
+      "k": 4,
+      "convergiu": true,
+      "menor_proporcao": 0.12879581151832462,
+      "silhouette": 0.1177322277377206,
+      "davies_bouldin": 2.762233239464,
+      "calinski_harabasz": 105.37399618954646,
+      "elegivel": true
+    },
+    {
+      "modelo": "mistura_gaussiana",
+      "k": 5,
+      "convergiu": true,
+      "menor_proporcao": 0.03769633507853403,
+      "silhouette": 0.08942161421434289,
+      "davies_bouldin": 3.108751856614886,
+      "calinski_harabasz": 80.28007887242873,
+      "elegivel": true
+    },
+    {
+      "modelo": "mistura_gaussiana",
+      "k": 6,
+      "convergiu": true,
+      "menor_proporcao": 0.03769633507853403,
+      "silhouette": 0.06445091134343618,
+      "davies_bouldin": 3.002377756075095,
+      "calinski_harabasz": 73.69107068796694,
+      "elegivel": true
+    }
+  ],
+  "finalistas_teste": {
+    "kmeans": {
+      "k": 6,
+      "tamanhos": [
+        257,
+        225,
+        242,
+        39,
+        42,
+        150
+      ],
+      "menor_proporcao": 0.040837696335078534,
+      "silhouette": 0.2293810352276263,
+      "davies_bouldin": 1.336547725469863,
+      "calinski_harabasz": 203.13468873108533
+    },
+    "mistura_gaussiana": {
+      "k": 3,
+      "tamanhos": [
+        281,
+        309,
+        365
+      ],
+      "menor_proporcao": 0.2942408376963351,
+      "silhouette": 0.13454864353722168,
+      "davies_bouldin": 2.1617334754779347,
+      "calinski_harabasz": 140.74261207228855
+    }
+  },
+  "observacao": "Métricas de teste são dos pipelines ajustados apenas no treino; o artefato final foi reajustado em toda a base."
+}
