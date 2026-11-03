@@ -129,6 +129,7 @@ print('Variância explicada pelas duas componentes:', round(pca.explained_varian
 O código abaixo é o conteúdo integral de `api.py`. A API carrega o modelo uma vez na inicialização, valida entradas e nunca chama `fit` durante uma requisição. A inicialização do servidor fica protegida pelo bloco `__main__`; os exemplos seguintes usam o cliente de testes do Flask.
 
 Rotas: `GET /saude`, `GET /modelo`, `GET /municipios/<codigo_ibge>` e `POST /prever`. O POST recebe somente `codigo_ibge` textual de sete dígitos ou `indicadores` contendo exatamente as oito features. Erros de domínio retornam 422, município ausente 404 e artefato indisponível 503.'''),
+        codigo(codigo_modulo('api.py')),
         codigo("API_CODIGO = " + repr((PASTA / 'api.py').read_text(encoding='utf-8')) + "\nPath('api.py').write_text(API_CODIGO, encoding='utf-8')\nprint('api.py gerado com o código completo mostrado nesta célula.')"),
         codigo('''reaberto = joblib.load('modelo_alpha4.joblib')
 assert np.array_equal(reaberto['pipeline'].predict(dados[FEATURES]), artefato['pipeline'].predict(dados[FEATURES]))
