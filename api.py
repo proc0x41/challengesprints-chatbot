@@ -38,4 +38,50 @@ def criar_app(caminho_modelo=None):
             'modelo', 'k', 'features', 'perfis', 'regras', 'ano_referencia', 'metricas', 'versoes',
         ]})
 
+    def prever(indicadores, municipio=None):
+        entrada = pd.DataFrame([indicadores], columns=artefato['features'])
+        grupo = int(artefato['pipeline'].predict(entrada)[0])
+        perfil = artefato['perfis'][str(grupo)]
+        recomendacoes = [item for item in perfil['recomendacoes'] if
+            item['categoria'] != 'entrega_voluntaria'
+            or indicadores['pontos_entrega_voluntaria_por_mil_hab'] > 0]
+        return jsonify({
+            'modelo': artefato['modelo'], 'grupo': grupo, 'perfil': perfil['nome'],
+            'municipio': municipio, 'ano_referencia': artefato['ano_referencia'],
+            'recomendacoes': recomendacoes,
+            'fora_da_faixa_observada': [nome for nome in artefato['features']
+                if indicadores[nome] > artefato['limites_observados'][nome]],
+            'aviso': 'Sugestões por contexto municipal de 2023, baseadas em regras de projeto; não preveem engajamento individual. Confirme serviços locais e não manipule resíduos perigosos.',
+        })
+
+    @app.get('/municipios/<codigo>')
+    def consultar_municipio(codigo):
+        if artefato is None:
+            return jsonify({'erro': 'Modelo indisponível.'}), 503
+        registro = artefato['catalogo'].get(codigo)
+        if registro is None:
+            return jsonify({'erro': 'Município não encontrado na base de 2023.'}), 404
+        indicadores = {nome: registro[nome] for nome in artefato['features']}
+        return prever(indicadores, {'codigo_ibge': codigo, 'nome': registro['municipio'], 'uf': registro['uf']})
+
+    @app.post('/prever')
+    def receber_previsao():
+        if artefato is None:
+            return jsonify({'erro': 'Modelo indisponível.'}), 503
+        corpo = request.get_json()
+        if isinstance(corpo, dict) and set(corpo) == {'codigo_ibge'}:
+            codigo = corpo['codigo_ibge']
+            if not isinstance(codigo, str) or len(codigo) != 7 or not codigo.isascii() or not codigo.isdigit():
+                return jsonify({'erro': 'codigo_ibge deve ser um texto com sete dígitos.'}), 422
+            return consultar_municipio(codigo)
+        if not isinstance(corpo, dict) or set(corpo) != {'indicadores'}:
+            return jsonify({'erro': 'Envie apenas codigo_ibge ou indicadores.'}), 422
+        return prever(corpo['indicadores'])
+
     return app
+
+
+app = criar_app()
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=int(os.getenv('PORT', '5000')), debug=False)
