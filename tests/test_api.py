@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
@@ -64,3 +65,24 @@ class TestAPI(unittest.TestCase):
                 cliente = criar_app(Path(pasta) / 'ausente.joblib').test_client()
             self.assertEqual(cliente.get('/saude').status_code, 503)
             self.assertEqual(cliente.post('/prever', json={'codigo_ibge': '1100015'}).status_code, 503)
+
+    def test_artefato_incompleto_nao_anuncia_saude_valida(self):
+        casos = [{'formato': 1}]
+        for campo, valor in [
+            ('pipeline', None), ('features', ['campo_desconhecido']), ('modelo', 17),
+            ('perfis', {'0': {'nome': 'Perfil incompleto'}}),
+            ('catalogo', {'1100015': {'municipio': 'Município', 'uf': 'RO'}}),
+        ]:
+            artefato = deepcopy(self.artefato)
+            artefato[campo] = valor
+            casos.append(artefato)
+        with tempfile.TemporaryDirectory() as pasta:
+            for indice, artefato in enumerate(casos):
+                with self.subTest(caso=indice):
+                    caminho = Path(pasta) / f'incompleto-{indice}.joblib'
+                    joblib.dump(artefato, caminho)
+                    with self.assertLogs(level='ERROR'):
+                        cliente = criar_app(caminho).test_client()
+                    self.assertEqual(cliente.get('/saude').status_code, 503)
+                    self.assertEqual(cliente.get('/modelo').status_code, 503)
+                    self.assertEqual(cliente.post('/prever', json={'codigo_ibge': '1100015'}).status_code, 503)

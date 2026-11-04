@@ -1,6 +1,6 @@
 # Verificação da entrega de IA
 
-Verificações executadas em 03/11/2026, antes da revisão independente:
+Verificações executadas em 03/11/2026, durante a implementação e após a revisão independente:
 
 - Dois modelos realmente treinados sobre a base recebida. Dez candidatos comparados, com partições disjuntas de 2.865/955/955 municípios.
 - Pré-processamento de cada candidato ajustado somente no treino. Escolha pela validação; teste reservado para avaliar os finalistas fixados.
@@ -17,4 +17,6 @@ Verificações executadas em 03/11/2026, antes da revisão independente:
 
 O `.gitattributes` preserva os bytes do CSV original e evita que conversões de fim de linha no checkout invalidem sua verificação SHA-256. O arquivo serializado foi regenerado pela execução final do notebook; suas métricas e previsões foram novamente conferidas.
 
-A revisão por outro agente ainda é necessária antes de considerar o trabalho concluído. Não houve publicação remota nem submissão ao portal acadêmico.
+A revisão independente reproduziu notebook, API e entrega de quatro arquivos, aprovando o escopo. Identificou um achado baixo: um artefato contendo apenas `formato=1` era anunciado como saudável. A inicialização agora verifica campos obrigatórios, método `predict`, metadados das features, perfis, recomendações e registros municipais usados pelas rotas. O teste de regressão cobre seis formas de artefato incompleto; saúde, metadados e previsão retornam 503 nesses casos. Essa verificação de estrutura não pretende garantir validade de todo objeto serializado nem substituir confiança na sua origem.
+
+A suíte passou a 13 testes. Notebook e pacote foram regenerados e a reprodução isolada foi repetida após essa correção. Não houve publicação remota nem submissão ao portal acadêmico.

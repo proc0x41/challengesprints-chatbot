@@ -84,6 +84,9 @@ No Linux/macOS substitua .venv\Scripts\python.exe por .venv/bin/python.
 Servidor local: http://127.0.0.1:5000, sem debug. Não há publicação remota.
 Para trocar o modelo use ALPHA4_MODELO; para trocar a porta use PORT.
 O artefato é carregado uma vez ao iniciar; não há fit por requisição.
+A inicialização verifica campos obrigatórios, pipeline com predict e metadados
+usados pelas rotas. Artefato incompleto permanece indisponível com status 503;
+essa checagem não substitui a confiança na origem do arquivo serializado.
 
 ROTAS
 GET /saude: status ok (200) ou indisponivel (503).

@@ -26,6 +26,49 @@ def validar_indicadores(indicadores, artefato):
         raise ValueError('A cobertura seletiva não pode superar a cobertura total.')
 
 
+def validar_artefato(artefato):
+    obrigatorias = {
+        'formato', 'pipeline', 'modelo', 'k', 'features', 'percentuais', 'perfis',
+        'regras', 'ano_referencia', 'metricas', 'versoes', 'catalogo', 'limites_observados',
+    }
+    if not isinstance(artefato, dict) or not obrigatorias.issubset(artefato):
+        raise ValueError('Artefato incompleto: faltam campos exigidos pela API.')
+    if artefato['formato'] != 1 or not callable(getattr(artefato['pipeline'], 'predict', None)):
+        raise ValueError('Formato ou pipeline de previsão incompatível.')
+    if artefato['modelo'] not in ('kmeans', 'mistura_gaussiana') or type(artefato['k']) is not int or artefato['k'] < 2:
+        raise ValueError('Metadados do modelo inválidos.')
+    esperadas = {
+        'taxa_urbanizacao_pct', 'densidade_populacional_hab_km2',
+        'cobertura_coleta_residuos_pct', 'cobertura_coleta_seletiva_pct',
+        'pontos_entrega_voluntaria_por_mil_hab', 'massa_residuos_urbanos_kg_hab_dia',
+        'disposicao_final_inadequada_pct', 'recuperacao_reciclaveis_pct',
+    }
+    features = artefato['features']
+    if not isinstance(features, list) or len(features) != 8 or set(features) != esperadas:
+        raise ValueError('Features do artefato incompatíveis com a API.')
+    if set(artefato['percentuais']) != {nome for nome in features if nome.endswith('_pct')}:
+        raise ValueError('Metadados dos percentuais inválidos.')
+    if not isinstance(artefato['regras'], list) or type(artefato['ano_referencia']) is not int:
+        raise ValueError('Regras ou ano de referência inválidos.')
+    for nome in ['perfis', 'metricas', 'versoes', 'catalogo']:
+        if not isinstance(artefato[nome], dict) or not artefato[nome]:
+            raise ValueError(f'{nome} deve ser um objeto não vazio.')
+    for grupo in range(artefato['k']):
+        perfil = artefato['perfis'].get(str(grupo))
+        if not isinstance(perfil, dict) or not isinstance(perfil.get('nome'), str) or not isinstance(perfil.get('recomendacoes'), list):
+            raise ValueError('Perfil de grupo incompleto.')
+        for recomendacao in perfil['recomendacoes']:
+            if not isinstance(recomendacao, dict) or not all(
+                isinstance(recomendacao.get(campo), str) for campo in ['categoria', 'orientacao', 'motivo_grupo']
+            ):
+                raise ValueError('Recomendação de grupo incompleta.')
+    validar_indicadores(artefato['limites_observados'], artefato)
+    for registro in artefato['catalogo'].values():
+        if not isinstance(registro, dict) or not all(isinstance(registro.get(campo), str) for campo in ['municipio', 'uf']):
+            raise ValueError('Registro do catálogo municipal incompleto.')
+        validar_indicadores({nome: registro[nome] for nome in features}, artefato)
+
+
 def criar_app(caminho_modelo=None):
     app = Flask(__name__)
     app.json.ensure_ascii = False
@@ -40,8 +83,7 @@ def criar_app(caminho_modelo=None):
     # Carrega uma única vez na inicialização. Nunca há fit dentro das rotas.
     try:
         artefato = joblib.load(caminho)
-        if artefato.get('formato') != 1:
-            raise ValueError('Formato de modelo incompatível.')
+        validar_artefato(artefato)
     except Exception:
         app.logger.exception('Não foi possível carregar o modelo local.')
         artefato = None

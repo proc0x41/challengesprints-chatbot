@@ -14,7 +14,7 @@ Fonte: `ChatBot.md` fornecido pelo grupo. Identidades: `Alpha4_Sprint3.pdf`. Bas
 | Código simples e legível | Módulos pequenos separados por responsabilidade; API standalone |
 | Dependências reproduzíveis | `requirements.txt`, lock completo e versões mínimas de execução em `integrantes.txt` |
 | GitFlow e rodízio | `main`, `develop`, `feature/modelos`; identidades locais alternadas e commits convencionais em português |
-| Revisão independente | Ainda será realizada por outro agente antes da conclusão |
+| Revisão independente | Notebook/API/pacote reproduzidos e aprovados; achado baixo sobre artefato incompleto corrigido e coberto por regressão |
 | Publicação remota | Destino da IA não informado; nenhuma publicação realizada |
 
 O melhor candidato pela validação foi K-Means k=6; a silhouette do teste reservado foi 0,22938, contra 0,13455 do GMM k=3. Esses valores são métricas geométricas internas modestas, não eficácia das missões. O vencedor foi reajustado na base completa somente depois da avaliação. Regras de recomendação são heurísticas auditáveis separadas do modelo.
