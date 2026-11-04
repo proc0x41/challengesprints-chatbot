@@ -1,0 +1,142 @@
+ALPHA4 - ARTIFICIAL INTELLIGENCE & CHATBOT - SPRINT 4
+Recomendação contextual de missões sustentáveis para a Soul Up
+Turma: 1TDSPW
+
+INTEGRANTES
+Vinicius de Oliveira - RM 561862
+Robison Custodio Junior - RM 572866
+Lucas Fernando Silva - RM 564848
+Thiago Shimizu Sodré dos Santos - RM 572867
+Arthur Mendes Garcia - RM 571703
+
+QUATRO ARQUIVOS DA ENTREGA
+1. Alpha4_Modelos.ipynb: base original compactada, código Python completo,
+   dois modelos treinados, gráfico e discussão em Markdown.
+2. modelo_alpha4.joblib: pipeline vencedor, perfis, regras, métricas, versões
+   e catálogo municipal. Carregue apenas artefatos de origem confiável.
+3. api.py: API Flask independente dos demais módulos do repositório.
+4. integrantes.txt: integrantes, explicações e instruções deste documento.
+
+PROBLEMA E DADOS
+Cada linha é um município, não uma pessoa. A base fornecida na Sprint 3
+combina SINISA (ano ambiental 2023) e cadastro de localidades IBGE. São 4.775
+municípios, 31 colunas e 27 UFs, sem ausências ou códigos IBGE duplicados.
+O CSV exato está incorporado ao notebook com verificação SHA-256.
+Não existem rótulos de missão aceita nem dados de engajamento individual.
+
+MODELOS E PREPARO
+Foram treinados K-Means e Gaussian Mixture com covariância completa.
+K-Means é uma referência simples por distância a centros. Gaussian Mixture
+permite formatos mais flexíveis. Ambos possuem predict para a API.
+
+Oito indicadores entram nas distâncias: urbanização, densidade, cobertura
+comum, cobertura seletiva, pontos de entrega por mil habitantes, massa urbana
+de resíduos por habitante/dia, disposição inadequada e recuperação.
+Identificadores, nomes, binários derivados e gap redundante ficam fora.
+Usamos log1p em densidade, pontos de entrega e massa, seguido de StandardScaler.
+
+Divisão 60/20/20 estratificada por grande região, semente 42: 2.865 treino,
+955 validação e 955 teste. Todo o preparo aprende apenas do treino.
+Comparamos k=2 até 6 para cada família. Elegibilidade: convergência e ao menos
+2% da validação em cada grupo. A escolha usa a maior silhouette de validação;
+o teste foi reservado até fixar os finalistas e o vencedor.
+
+RESULTADOS EXECUTADOS
+K-Means k=6: silhouette validação 0,22725; teste 0,22938; Davies-Bouldin teste
+1,33655; Calinski-Harabasz teste 203,13469.
+Gaussian Mixture k=3: silhouette validação 0,13739; teste 0,13455;
+Davies-Bouldin teste 2,16173; Calinski-Harabasz teste 140,74261.
+
+K-Means venceu entre os candidatos. A separação é modesta e há sobreposição;
+esses números não são acurácia nem sucesso das missões. k=6 está no limite da
+faixa pesquisada, não é um ótimo global comprovado. Silhouette favorece grupos
+compactos e pode favorecer K-Means. O GMM não obteve maior separação por esse
+critério. Não há rótulos verdadeiros para medir acertos de recomendação.
+
+Após avaliar, reajustamos o vencedor em toda a base para disponibilização.
+As métricas de teste são dos pipelines ajustados apenas no treino, não desse
+reajuste final. Os IDs dos grupos podem mudar entre novos ajustes.
+
+REGRAS E LIMITAÇÕES
+O ML aprende grupos; missões vêm de regras explícitas separadas. Limiares de
+projeto: seletiva <30%, recuperação <5%, massa >1 kg/hab/dia, disposição
+inadequada >50% e indicador de ponto de entrega >0. Não são padrões oficiais
+ou parâmetros aprendidos. Regras e médias aparecem em GET /modelo.
+A API remove entrega voluntária quando o indicador municipal é zero; se não
+restar categoria específica, sugere consumo consciente.
+
+Dados municipais declarados podem conter erros/extremos. A base de 2023 tem
+viés de resposta e não cobre os municípios excluídos. Uma partição aleatória
+não comprova generalização temporal. Não houve avaliação humana das missões,
+teste A/B ou evidência causal de mudanças de hábito. Atualizar dados e validar
+recomendações com pessoas são próximos passos. Confirme serviços locais; não
+manipule resíduos perigosos nem entre em áreas de descarte.
+
+COMO USAR A API COM SOMENTE OS QUATRO ARQUIVOS
+Requer Python 3.12. Não é necessário executar o notebook para usar o modelo.
+No terminal da pasta dos quatro arquivos:
+
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install numpy==2.5.4 pandas==3.1.0 scipy==1.18.1 scikit-learn==1.9.1 Flask==3.1.3 joblib==1.6.0
+.venv\Scripts\python.exe api.py
+
+No Linux/macOS substitua .venv\Scripts\python.exe por .venv/bin/python.
+Servidor local: http://127.0.0.1:5000, sem debug. Não há publicação remota.
+Para trocar o modelo use ALPHA4_MODELO; para trocar a porta use PORT.
+O artefato é carregado uma vez ao iniciar; não há fit por requisição.
+
+ROTAS
+GET /saude: status ok (200) ou indisponivel (503).
+GET /modelo: features, perfis, regras, versões e métricas.
+GET /municipios/1100015: previsão para Alta Floresta D'Oeste/RO.
+POST /prever: Content-Type application/json, com exatamente uma das formas:
+
+{"codigo_ibge":"1100015"}
+
+ou
+
+{"indicadores":{
+  "taxa_urbanizacao_pct":57.27,
+  "densidade_populacional_hab_km2":3.07,
+  "cobertura_coleta_residuos_pct":59.15,
+  "cobertura_coleta_seletiva_pct":0,
+  "pontos_entrega_voluntaria_por_mil_hab":0.05,
+  "massa_residuos_urbanos_kg_hab_dia":0.54,
+  "disposicao_final_inadequada_pct":0,
+  "recuperacao_reciclaveis_pct":0
+}}
+
+Exemplo PowerShell:
+Invoke-RestMethod -Uri http://127.0.0.1:5000/prever -Method Post -ContentType 'application/json' -Body '{"codigo_ibge":"1100015"}'
+
+Resposta: grupo, perfil, recomendações com motivo, ano e município quando
+consultado por código. Valores acima do máximo observado são sinalizados.
+As oito features exatas são obrigatórias na forma indicadores. Números finitos
+e não negativos; percentuais 0 a 100; seletiva não pode superar a cobertura total.
+Falhas: 400 JSON malformado, 404 ausente, 413 corpo >32 KiB, 415 tipo incorreto,
+422 entrada inválida, 503 modelo indisponível. Não há treino durante requisições.
+
+COMO REEXECUTAR O NOTEBOOK
+No mesmo ambiente, instale também:
+.venv\Scripts\python.exe -m pip install nbformat==5.11.1 nbclient==0.11.0 ipykernel==7.4.0 matplotlib==3.11.2
+
+Abra Alpha4_Modelos.ipynb em um editor de notebooks, selecione o Python da .venv
+e execute as células em ordem. O notebook restaura o CSV original se ausente,
+recusando sobrescrever um CSV diferente. Gera modelo, api.py e relatórios
+metricas.json/perfis_grupos.json. A cópia entregue já está executada.
+
+FONTES E CRÉDITOS
+Identidades/contexto: Alpha4_Sprint3.pdf fornecido pelo grupo.
+Origem/dicionário: Alpha4_Explicacao_Base_Dados.txt fornecido pelo grupo.
+SINISA: https://www.gov.br/cidades/pt-br/acesso-a-informacao/acoes-e-programas/saneamento/sinisa/resultados-sinisa
+IBGE: https://servicodados.ibge.gov.br/api/docs/localidades
+scikit-learn: https://scikit-learn.org/stable/modules/clustering.html
+Gaussian Mixture: https://scikit-learn.org/stable/modules/mixture.html
+Flask: https://flask.palletsprojects.com/en/stable/testing/
+
+Uso de IA: implementação, documentação e verificações assistidas pelo Codex
+conforme requisitos e dados fornecidos. Métricas vieram de execução real.
+Projeto IA independente do frontend. Git local com Conventional Commits em
+português e identidades alternadas conforme solicitado. Isso não comprova
+execução manual individual por cada pessoa. Não houve publicação remota;
+o endereço do repositório IA ainda não foi informado.
