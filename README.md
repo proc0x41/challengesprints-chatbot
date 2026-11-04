@@ -52,7 +52,7 @@ Missões vêm de heurísticas explícitas separadas do aprendizado. O ano ambien
 
 ## Autores, créditos e contato
 
-Vinicius de Oliveira (561862), Robison Custodio Junior (572866), Lucas Fernando Silva (564848), Thiago Shimizu Sodré dos Santos (572867) e Arthur Mendes Garcia (571703), turma 1TDSPW. Contato acadêmico solicitado: `{RM}@fiap.com.br`.
+Vinicius de Oliveira (561862), Robison Custodio Junior (572866), Lucas Fernando Silva (564848), Thiago Shimizu Sodré dos Santos (572867) e Arthur Mendes Garcia (571703), turma 1TDSPW. Contato acadêmico solicitado: `rm{RM}@fiap.com.br`.
 
 Dados e explicação da Sprint 3 fornecidos pelo grupo, com origem SINISA e IBGE. Implementação e verificações assistidas pelo Codex. O rodízio de identidades Git atende à solicitação e não comprova execução manual individual por cada pessoa.
 
