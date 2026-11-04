@@ -58,4 +58,4 @@ Dados e explicação da Sprint 3 fornecidos pelo grupo, com origem SINISA e IBGE
 
 ## Versionamento e publicação
 
-GitFlow: `main`, `develop` e `feature/modelos`, Conventional Commits em português. Destino remoto da IA não informado, portanto sem publicação no GitHub. Flask inicia localmente em `127.0.0.1:5000`.
+GitFlow: `main`, `develop`, `feature/modelos` e `release/v0.1.0`, com Conventional Commits em português. A versão revisada está na tag `v0.1.0`; veja [notas da versão](RELEASE_NOTES.md). Destino remoto da IA não informado, portanto sem publicação no GitHub. Flask inicia localmente em `127.0.0.1:5000`.
