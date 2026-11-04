@@ -45,7 +45,7 @@ class TestAPI(unittest.TestCase):
             with self.subTest(corpo=corpo):
                 resposta = self.cliente.post('/prever', data=__import__('json').dumps(corpo), content_type='application/json')
                 self.assertEqual(resposta.status_code, 422)
-        for valor in [-1, 101, True, '50', float('nan'), float('inf')]:
+        for valor in [-1, 101, True, '50', float('nan'), float('inf'), 10 ** 400]:
             indicadores = {**self.indicadores, 'taxa_urbanizacao_pct': valor}
             self.assertEqual(self.cliente.post('/prever', json={'indicadores': indicadores}).status_code, 422)
         indicadores = {**self.indicadores, 'cobertura_coleta_seletiva_pct': 100}

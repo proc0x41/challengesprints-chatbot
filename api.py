@@ -14,7 +14,11 @@ def validar_indicadores(indicadores, artefato):
     if not isinstance(indicadores, dict) or set(indicadores) != set(artefato['features']):
         raise ValueError('indicadores deve conter exatamente as oito features informadas em /modelo.')
     for nome, valor in indicadores.items():
-        if isinstance(valor, bool) or not isinstance(valor, (int, float)) or not math.isfinite(valor) or valor < 0:
+        try:
+            finito = isinstance(valor, (int, float)) and not isinstance(valor, bool) and math.isfinite(valor)
+        except OverflowError:
+            finito = False
+        if not finito or valor < 0:
             raise ValueError(f'{nome} deve ser um número finito não negativo.')
         if nome in artefato['percentuais'] and valor > 100:
             raise ValueError(f'{nome} deve estar entre zero e cem.')
